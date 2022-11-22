@@ -16,6 +16,7 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -57,6 +58,7 @@ class MainActivity : ComponentActivity(), IBaseActivity {
     @SuppressLint("MissingPermission")
     @Composable
     private fun PairedDevicesList() {
+        val context = LocalContext.current
         val isLoadingDevicesList by btConnViewModel.isLoadingDevicesList
         val scope = rememberCoroutineScope()
         val pullRefreshState = rememberPullRefreshState(
@@ -93,7 +95,12 @@ class MainActivity : ComponentActivity(), IBaseActivity {
                                     horizontal = dimensionResource(id = R.dimen.padding_small),
                                     vertical = dimensionResource(id = R.dimen.padding_mid)
                                 )
-                                .clickable { /*TODO connect to device*/ }
+                                .clickable {
+                                    btConnViewModel.connectToDevice(
+                                        context = context,
+                                        device = device
+                                    )
+                                }
                         ) {
                             Text(
                                 modifier = Modifier.fillMaxWidth(),

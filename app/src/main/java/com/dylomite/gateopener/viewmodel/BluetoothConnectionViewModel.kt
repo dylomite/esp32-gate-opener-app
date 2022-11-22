@@ -5,20 +5,24 @@ import android.app.Application
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
+import android.content.Context
 import android.content.Intent
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.dylomite.gateopener.model.bluetooth.BluetoothCallbacks
 import com.dylomite.gateopener.model.error.ErrorModel
 import com.dylomite.gateopener.model.error.ErrorType
 import com.dylomite.gateopener.repo.BluetoothRepo
+import com.dylomite.gateopener.repo.BluetoothRepo.isBonded
 import com.dylomite.gateopener.repo.PermissionRepo
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class BluetoothConnectionViewModel(app: Application, activity: ComponentActivity) :
     AndroidViewModel(app), IBaseViewModel {
@@ -47,16 +51,25 @@ class BluetoothConnectionViewModel(app: Application, activity: ComponentActivity
             }
         }
 
-    var bluetoothAdapter = mutableStateOf<BluetoothAdapter?>(null)
+    @SuppressLint("MissingPermission")
+    private val gattCallbacks = BluetoothCallbacks(
+        onConnect = { gatt ->
+            gatt.discoverServices()
+            Toast.makeText(activity, "Connected!", Toast.LENGTH_SHORT).show()
+        },
+        onDisconnect = { gatt -> disconnectDeviceAndReset(gatt) },
+    )
+    private var bluetoothAdapter = mutableStateOf<BluetoothAdapter?>(null)
     var bluetoothGatt = mutableStateOf<BluetoothGatt?>(null)
+
     var pairedDevicesList = mutableStateListOf<BluetoothDevice>()
     var isLoadingDevicesList = mutableStateOf(false)
 
-    private fun enableBluetooth() = askSingleBtPermissionLauncher
-        .launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
+    private fun enableBluetooth() =
+        askSingleBtPermissionLauncher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
 
-    private fun askBluetoothPermission() = askMultipleBtPermissionLauncher
-        .launch(PermissionRepo.getNeededBluetoothPermissions())
+    private fun askBluetoothPermission() =
+        askMultipleBtPermissionLauncher.launch(PermissionRepo.getNeededBluetoothPermissions())
 
     fun setupBluetooth(activity: ComponentActivity) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -100,9 +113,47 @@ class BluetoothConnectionViewModel(app: Application, activity: ComponentActivity
                         error.value = ErrorModel(ErrorType.ErrorNoPairedDevices)
                     }
                 }
-
             }
             isLoadingDevicesList.value = false
+        }
+    }
+
+    /**
+     * NOTES:
+     *  - Remain on the main thread for the connection part
+     *  - Add BluetoothDevice.TRANSPORT_LE param to avoid error status 133!
+     *    See: https://github.com/android/connectivity-samples/issues/18
+     */
+    @SuppressLint("MissingPermission")
+    fun connectToDevice(context: Context, device: BluetoothDevice) {
+        viewModelScope.launch(Dispatchers.IO) {
+            isLoading.value = true
+            if (device.isBonded()) {
+                runBlocking(Dispatchers.Main) {
+                    bluetoothGatt.value = device
+                        .connectGatt(context, true, gattCallbacks, BluetoothDevice.TRANSPORT_LE)
+                        .also { gatt -> gatt.connect() }
+                }
+            } else {
+                error.value = ErrorModel(ErrorType.ErrorDeviceNotBonded)
+            }
+            isLoading.value = false//TODO: Impl dismiss after time
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    fun disconnectDeviceAndReset(bthGatt: BluetoothGatt? = bluetoothGatt.value) {
+        viewModelScope.launch(Dispatchers.IO) {
+            isLoading.value = true
+            bthGatt?.let { gatt ->
+                gatt.disconnect()
+                gatt.close()
+            }
+            bluetoothAdapter.value = null
+            isLoadingDevicesList.value = false
+            pairedDevicesList = mutableStateListOf()
+            bluetoothGatt.value = null
+            isLoading.value = false
         }
     }
 
