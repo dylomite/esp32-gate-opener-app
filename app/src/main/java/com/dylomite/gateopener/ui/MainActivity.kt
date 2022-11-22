@@ -1,4 +1,4 @@
-package com.dylomite.gateopener
+package com.dylomite.gateopener.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -13,7 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.dylomite.gateopener.ui.theme.GateOpenerTheme
 import com.dylomite.gateopener.viewmodel.BluetoothConnectionViewModel
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(),IBaseActivity {
 
     private val btConnViewModel by lazy { BluetoothConnectionViewModel(app = application) }
 
@@ -23,15 +23,13 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            GateOpenerTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Greeting("Android")
-                }
+
+        activityContents {
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colors.background
+            ) {
+                Greeting("Android")
             }
         }
     }

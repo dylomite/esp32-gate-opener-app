@@ -1,12 +1,12 @@
 package com.dylomite.gateopener.viewmodel
 
 import android.app.Application
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
-import com.example.btsample.model.error.ErrorModel
+import com.dylomite.gateopener.model.error.ErrorModel
 
-class BluetoothConnectionViewModel(app: Application) : AndroidViewModel(app) {
+class BluetoothConnectionViewModel(app: Application) : AndroidViewModel(app), IBaseViewModel {
 
-    val isLoading = MutableLiveData(false)
-    val error = MutableLiveData<ErrorModel?>(null)
+    override var isLoading = mutableStateOf(false)
+    override var error = mutableStateOf<ErrorModel?>(null)
 }
