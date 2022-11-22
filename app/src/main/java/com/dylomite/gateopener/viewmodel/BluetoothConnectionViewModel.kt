@@ -17,6 +17,7 @@ import com.dylomite.gateopener.model.error.ErrorType
 import com.dylomite.gateopener.repo.BluetoothRepo
 import com.dylomite.gateopener.repo.PermissionRepo
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class BluetoothConnectionViewModel(app: Application, activity: ComponentActivity) :
@@ -60,7 +61,6 @@ class BluetoothConnectionViewModel(app: Application, activity: ComponentActivity
     fun setupBluetooth(activity: ComponentActivity) {
         viewModelScope.launch(Dispatchers.IO) {
             isLoading.value = true
-
             BluetoothRepo.getBluetoothAdapter(activity)?.let { adapter ->
                 bluetoothAdapter.value = adapter
                 if (!PermissionRepo.hasBluetoothPermission(activity)) {
