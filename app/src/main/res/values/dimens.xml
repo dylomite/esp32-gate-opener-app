@@ -4,4 +4,9 @@
     <dimen name="padding_small">8dp</dimen>
     <dimen name="padding_mid">16dp</dimen>
     <dimen name="padding_big">30dp</dimen>
+    <!-- TEXT -->
+    <dimen name="text_small">12sp</dimen>
+    <dimen name="text_mid">16sp</dimen>
+    <dimen name="text_big">24sp</dimen>
+    <dimen name="text_bigger">36sp</dimen>
 </resources>

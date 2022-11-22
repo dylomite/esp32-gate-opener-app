@@ -49,6 +49,7 @@ class BluetoothConnectionViewModel(app: Application, activity: ComponentActivity
     var bluetoothAdapter = mutableStateOf<BluetoothAdapter?>(null)
     var bluetoothGatt = mutableStateOf<BluetoothGatt?>(null)
     var pairedDevicesList = mutableStateListOf<BluetoothDevice>()
+    var isLoadingDevicesList = mutableStateOf(false)
 
     private fun enableBluetooth() = askSingleBtPermissionLauncher
         .launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
@@ -85,7 +86,7 @@ class BluetoothConnectionViewModel(app: Application, activity: ComponentActivity
     @SuppressLint("MissingPermission")
     fun listPairedDevices() {
         viewModelScope.launch(Dispatchers.IO) {
-            isLoading.value = true
+            isLoadingDevicesList.value = true
             bluetoothAdapter.value?.let { adapter ->
                 if (!adapter.isEnabled) {
                     enableBluetooth()
@@ -101,7 +102,7 @@ class BluetoothConnectionViewModel(app: Application, activity: ComponentActivity
                 }
 
             }
-            isLoading.value = false
+            isLoadingDevicesList.value = false
         }
     }
 
