@@ -2,6 +2,8 @@ package com.dylomite.gateopener.viewmodel
 
 import android.app.Application
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothGatt
 import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
@@ -10,6 +12,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.dylomite.gateopener.model.error.ErrorModel
 import com.dylomite.gateopener.model.error.ErrorType
+import com.dylomite.gateopener.repo.BluetoothRepo
 import com.dylomite.gateopener.repo.PermissionRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -41,17 +44,30 @@ class BluetoothConnectionViewModel(app: Application, activity: ComponentActivity
             }
         }
 
+    var bluetoothAdapter = mutableStateOf<BluetoothAdapter?>(null)
+    var bluetoothGatt = mutableStateOf<BluetoothGatt?>(null)
+    var pairedDevicesList = mutableListOf<BluetoothDevice>()
+
     fun setupBluetooth(activity: ComponentActivity) {
         viewModelScope.launch(Dispatchers.IO) {
             isLoading.value = true
-            if (!PermissionRepo.hasBluetoothPermission(activity)) {
-                //Bluetooth permission not given
-                askBluetoothPermission()
-                isLoading.value = false
-                return@launch
-            }
 
-            //TODO: enableBluetooth()
+            BluetoothRepo.getBluetoothAdapter(activity)?.let { adapter ->
+                bluetoothAdapter.value = adapter
+                if (!PermissionRepo.hasBluetoothPermission(activity)) {
+                    //Bluetooth permission not given
+                    askBluetoothPermission()
+                    isLoading.value = false
+                    return@launch
+                }
+
+                if (!adapter.isEnabled) {
+                    enableBluetooth()
+                }
+            } ?: run {
+                // Device doesn't support Bluetooth
+                error.value = ErrorModel(ErrorType.ErrorBluetoothNotSupported)
+            }
 
             isLoading.value = false
         }

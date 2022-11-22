@@ -15,6 +15,7 @@ class ErrorModel(
     fun getMessage(context: Context): String {
         val strRes = when (errorType) {
             ErrorType.ErrorGeneric -> R.string.error_generic
+            ErrorType.ErrorBluetoothNotSupported -> R.string.error_bluetooth_not_supported
             else -> R.string.error_generic
         }
 

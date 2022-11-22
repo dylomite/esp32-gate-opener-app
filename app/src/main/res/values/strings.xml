@@ -8,4 +8,5 @@
     <!-- ERROR -->
     <string name="error_generic_title">Error</string>
     <string name="error_generic">Sorry an error occurred.</string>
+    <string name="error_bluetooth_not_supported">"Bluetooth not supported by device.</string>
 </resources>
