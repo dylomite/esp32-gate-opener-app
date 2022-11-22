@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">Gate Opener</string>
+
+    <!-- GENERIC -->
+    <string name="ok">OK</string>
+    <string name="discard">Discard</string>
+
     <!-- ERROR -->
     <string name="error_generic_title">Error</string>
     <string name="error_generic">Sorry an error occurred.</string>

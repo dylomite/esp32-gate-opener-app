@@ -9,4 +9,5 @@ class BluetoothConnectionViewModel(app: Application) : AndroidViewModel(app), IB
 
     override var isLoading = mutableStateOf(false)
     override var error = mutableStateOf<ErrorModel?>(null)
+
 }
