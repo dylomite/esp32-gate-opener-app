@@ -16,6 +16,8 @@ class ErrorModel(
         val strRes = when (errorType) {
             ErrorType.ErrorGeneric -> R.string.error_generic
             ErrorType.ErrorBluetoothNotSupported -> R.string.error_bluetooth_not_supported
+            ErrorType.ErrorNoPairedDevices -> R.string.error_no_paired_devices
+            ErrorType.ErrorDeviceNotPaired -> R.string.error_device_not_paired
             else -> R.string.error_generic
         }
 

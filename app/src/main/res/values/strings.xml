@@ -8,5 +8,7 @@
     <!-- ERROR -->
     <string name="error_generic_title">Error</string>
     <string name="error_generic">Sorry an error occurred.</string>
-    <string name="error_bluetooth_not_supported">"Bluetooth not supported by device.</string>
+    <string name="error_bluetooth_not_supported">Bluetooth not supported by device.</string>
+    <string name="error_no_paired_devices">No paired devices found.</string>
+    <string name="error_device_not_paired">It looks like you didn\'t pair the device. You need to pair the device in your phone settings first.</string>
 </resources>

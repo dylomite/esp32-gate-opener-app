@@ -36,8 +36,6 @@ class MainActivity : ComponentActivity(), IBaseActivity {
                 Text("Android")
             }
         }
-
-        btConnViewModel.setupBluetooth(this)
     }
 
 }

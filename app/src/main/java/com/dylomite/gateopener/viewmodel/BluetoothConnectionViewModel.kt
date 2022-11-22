@@ -1,5 +1,6 @@
 package com.dylomite.gateopener.viewmodel
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -7,6 +8,7 @@ import android.bluetooth.BluetoothGatt
 import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -46,7 +48,13 @@ class BluetoothConnectionViewModel(app: Application, activity: ComponentActivity
 
     var bluetoothAdapter = mutableStateOf<BluetoothAdapter?>(null)
     var bluetoothGatt = mutableStateOf<BluetoothGatt?>(null)
-    var pairedDevicesList = mutableListOf<BluetoothDevice>()
+    var pairedDevicesList = mutableStateListOf<BluetoothDevice>()
+
+    private fun enableBluetooth() = askSingleBtPermissionLauncher
+        .launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
+
+    private fun askBluetoothPermission() = askMultipleBtPermissionLauncher
+        .launch(PermissionRepo.getNeededBluetoothPermissions())
 
     fun setupBluetooth(activity: ComponentActivity) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -60,9 +68,10 @@ class BluetoothConnectionViewModel(app: Application, activity: ComponentActivity
                     isLoading.value = false
                     return@launch
                 }
-
                 if (!adapter.isEnabled) {
                     enableBluetooth()
+                } else {
+                    listPairedDevices()
                 }
             } ?: run {
                 // Device doesn't support Bluetooth
@@ -73,13 +82,27 @@ class BluetoothConnectionViewModel(app: Application, activity: ComponentActivity
         }
     }
 
-    private fun enableBluetooth() {
-        askSingleBtPermissionLauncher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
-    }
+    @SuppressLint("MissingPermission")
+    fun listPairedDevices() {
+        viewModelScope.launch(Dispatchers.IO) {
+            isLoading.value = true
+            bluetoothAdapter.value?.let { adapter ->
+                if (!adapter.isEnabled) {
+                    enableBluetooth()
+                } else {
+                    pairedDevicesList = mutableStateListOf()
+                    // Get paired devices.
+                    val pairedDevices = adapter.bondedDevices
+                    if (pairedDevices.size > 0) {
+                        pairedDevicesList.addAll(pairedDevices.toList())
+                    } else {
+                        error.value = ErrorModel(ErrorType.ErrorNoPairedDevices)
+                    }
+                }
 
-    private fun askBluetoothPermission() {
-        askMultipleBtPermissionLauncher.launch(PermissionRepo.getNeededBluetoothPermissions())
+            }
+            isLoading.value = false
+        }
     }
-
 
 }
