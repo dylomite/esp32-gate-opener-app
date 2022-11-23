@@ -6,6 +6,7 @@
     <string name="discard">Discard</string>
 
     <string name="paired_devices_title">Paired Devices</string>
+    <string name="device_disconnected">Bluetooth device disconnected</string>
 
     <!-- ERROR -->
     <string name="error_generic_title">Error</string>

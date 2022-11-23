@@ -7,7 +7,7 @@ import android.bluetooth.BluetoothProfile
 import android.util.Log
 
 @SuppressLint("MissingPermission")
-class BluetoothCallbacks(
+class BluetoothDeviceCallbacks(
     val onConnect: (gatt: BluetoothGatt) -> Unit,
     val onDisconnect: (gatt: BluetoothGatt?) -> Unit
 ) : BluetoothGattCallback() {

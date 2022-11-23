@@ -1,7 +1,6 @@
 package com.dylomite.gateopener.repo
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.bluetooth.*
 import android.content.Context
 import android.util.Log
@@ -13,15 +12,15 @@ object BluetoothRepo {
 
     fun BluetoothDevice.isBonded() = this.bondState == BluetoothDevice.BOND_BONDED
 
-    fun getBluetoothManager(activity: Activity): BluetoothManager? {
+    private fun getBluetoothManager(context: Context): BluetoothManager? {
         return try {
-            activity.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+            context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         } catch (e: Exception) {
             Log.e(TAG, "getBluetoothManager: ", e)
             null
         }
     }
 
-    fun getBluetoothAdapter(activity: Activity) = getBluetoothManager(activity)?.adapter
+    fun getBluetoothAdapter(context: Context) = getBluetoothManager(context)?.adapter
 
 }

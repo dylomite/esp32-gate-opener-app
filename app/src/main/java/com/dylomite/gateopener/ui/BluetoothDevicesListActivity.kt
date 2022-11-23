@@ -24,14 +24,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.dylomite.gateopener.R
-import com.dylomite.gateopener.viewmodel.BluetoothConnectionViewModel
+import com.dylomite.gateopener.viewmodel.BluetoothDeviceListViewModel
 import kotlinx.coroutines.launch
 
 
 class BluetoothDevicesListActivity : ComponentActivity(), IBaseActivity {
 
-    private val btConnViewModel by lazy {
-        BluetoothConnectionViewModel(
+    private val btDevicesListViewModel by lazy {
+        BluetoothDeviceListViewModel(
             app = application,
             activity = this
         )
@@ -45,13 +45,13 @@ class BluetoothDevicesListActivity : ComponentActivity(), IBaseActivity {
         super.onCreate(savedInstanceState)
 
         activityContents(
-            errorModelState = btConnViewModel.error,
-            isLoadingState = btConnViewModel.isLoading
+            errorModelState = btDevicesListViewModel.error,
+            isLoadingState = btDevicesListViewModel.isLoading
         ) {
             PairedDevicesList()
         }
 
-        btConnViewModel.setupBluetooth(this)
+        btDevicesListViewModel.setupBluetooth(this)
     }
 
     @OptIn(ExperimentalMaterialApi::class)
@@ -59,11 +59,11 @@ class BluetoothDevicesListActivity : ComponentActivity(), IBaseActivity {
     @Composable
     private fun PairedDevicesList() {
         val context = LocalContext.current
-        val isLoadingDevicesList by btConnViewModel.isLoadingDevicesList
+        val isLoadingDevicesList by btDevicesListViewModel.isLoadingDevicesList
         val scope = rememberCoroutineScope()
         val pullRefreshState = rememberPullRefreshState(
             refreshing = isLoadingDevicesList,
-            onRefresh = { scope.launch { btConnViewModel.listPairedDevices() } }
+            onRefresh = { scope.launch { btDevicesListViewModel.listPairedDevices(context) } }
         )
 
         Column(modifier = Modifier.pullRefresh(pullRefreshState)) {
@@ -84,9 +84,9 @@ class BluetoothDevicesListActivity : ComponentActivity(), IBaseActivity {
                 fontWeight = FontWeight.Bold
             )
 
-            if (btConnViewModel.pairedDevicesList.isNotEmpty()) {
+            if (btDevicesListViewModel.pairedDevicesList.isNotEmpty()) {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    itemsIndexed(btConnViewModel.pairedDevicesList) { index, device ->
+                    itemsIndexed(btDevicesListViewModel.pairedDevicesList) { index, device ->
                         Divider()
                         Column(
                             modifier = Modifier
