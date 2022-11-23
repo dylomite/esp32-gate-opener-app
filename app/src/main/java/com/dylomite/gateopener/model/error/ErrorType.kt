@@ -7,7 +7,8 @@ sealed class ErrorType(val code: Long, val showDismissButton: Boolean = false) {
     object ErrorBluetoothNotSupported : ErrorType(1003)
     object ErrorNoPairedDevices : ErrorType(1004)
     object ErrorDeviceNotPaired : ErrorType(1005)
-    object ErrorDeviceDisconnected : ErrorType(1006)
-    object ErrorGattServiceNull : ErrorType(1007)
-    object ErrorGattCharacteristicNull : ErrorType(1008)
+    object ErrorDeviceNotBonded : ErrorType(1006)
+    object ErrorDeviceDisconnected : ErrorType(1007)
+    object ErrorGattServiceNull : ErrorType(1008)
+    object ErrorGattCharacteristicNull : ErrorType(1009)
 }
