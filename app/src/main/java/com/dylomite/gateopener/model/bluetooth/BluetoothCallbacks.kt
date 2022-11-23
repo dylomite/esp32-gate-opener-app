@@ -9,7 +9,7 @@ import android.util.Log
 @SuppressLint("MissingPermission")
 class BluetoothCallbacks(
     val onConnect: (gatt: BluetoothGatt) -> Unit,
-    val onDisconnect: (gatt: BluetoothGatt) -> Unit
+    val onDisconnect: (gatt: BluetoothGatt?) -> Unit
 ) : BluetoothGattCallback() {
 
     companion object {
@@ -17,25 +17,30 @@ class BluetoothCallbacks(
     }
 
     override fun onConnectionStateChange(
-        gatt: BluetoothGatt,
+        gatt: BluetoothGatt?,
         status: Int,
         newState: Int
     ) {
-        val deviceName = gatt.device.name
-        when (status) {
-            BluetoothGatt.GATT_SUCCESS -> {
-                if (newState == BluetoothProfile.STATE_CONNECTED) {
-                    Log.d(TAG, "Successfully connected to $deviceName")
-                    onConnect(gatt)
-                } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                    Log.d(TAG, "Disconnected from $deviceName")
-                    onDisconnect(gatt)
+        gatt?.let { safeGatt ->
+            val deviceName = safeGatt.device.name
+            when (status) {
+                BluetoothGatt.GATT_SUCCESS -> {
+                    if (newState == BluetoothProfile.STATE_CONNECTED) {
+                        Log.d(TAG, "Successfully connected to $deviceName")
+                        onConnect(safeGatt)
+                    } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                        Log.d(TAG, "Disconnected from $deviceName")
+                        onDisconnect(safeGatt)
+                    }
+                }
+                else -> {
+                    Log.d(TAG, "Error $status [device: $deviceName]. Disconnecting...")
+                    onDisconnect(safeGatt)
                 }
             }
-            else -> {
-                Log.d(TAG, "Error $status [device: $deviceName]. Disconnecting...")
-                onDisconnect(gatt)
-            }
+        } ?: run {
+            Log.d(TAG, "Error $status. Gatt was null.")
+            onDisconnect(null)
         }
     }
 

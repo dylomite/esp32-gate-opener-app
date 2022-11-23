@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
@@ -55,7 +56,7 @@ class BluetoothConnectionViewModel(app: Application, activity: ComponentActivity
     private val gattCallbacks = BluetoothCallbacks(
         onConnect = { gatt ->
             gatt.discoverServices()
-            Toast.makeText(activity, "Connected!", Toast.LENGTH_SHORT).show()
+            Log.d(TAG, "BluetoothCallbacks: connected!")
         },
         onDisconnect = { gatt -> disconnectDeviceAndReset(gatt) },
     )

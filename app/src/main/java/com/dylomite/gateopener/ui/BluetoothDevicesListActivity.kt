@@ -28,7 +28,7 @@ import com.dylomite.gateopener.viewmodel.BluetoothConnectionViewModel
 import kotlinx.coroutines.launch
 
 
-class MainActivity : ComponentActivity(), IBaseActivity {
+class BluetoothDevicesListActivity : ComponentActivity(), IBaseActivity {
 
     private val btConnViewModel by lazy {
         BluetoothConnectionViewModel(
@@ -96,9 +96,11 @@ class MainActivity : ComponentActivity(), IBaseActivity {
                                     vertical = dimensionResource(id = R.dimen.padding_mid)
                                 )
                                 .clickable {
-                                    btConnViewModel.connectToDevice(
-                                        context = context,
-                                        device = device
+                                    startActivity(
+                                        BluetoothRemoteControlActivity.getStartIntent(
+                                            context = context,
+                                            device = device
+                                        )
                                     )
                                 }
                         ) {
