@@ -18,6 +18,9 @@ class ErrorModel(
             ErrorType.ErrorBluetoothNotSupported -> R.string.error_bluetooth_not_supported
             ErrorType.ErrorNoPairedDevices -> R.string.error_no_paired_devices
             ErrorType.ErrorDeviceNotPaired -> R.string.error_device_not_paired
+            ErrorType.ErrorDeviceDisconnected -> R.string.error_device_disconnected
+            ErrorType.ErrorGattServiceNull -> R.string.error_gatt_service_null
+            ErrorType.ErrorGattCharacteristicNull -> R.string.error_gatt_characteristic_null
             else -> R.string.error_generic
         }
 

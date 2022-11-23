@@ -26,8 +26,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.dylomite.gateopener.R
-import com.dylomite.gateopener.model.bluetooth.IBluetoothConnection
-import com.dylomite.gateopener.ui.theme.Shapes
+import com.dylomite.gateopener.bluetooth.IBluetoothConnection
+import com.dylomite.gateopener.model.Channel
+import com.dylomite.gateopener.model.CharacteristicValue
 import com.dylomite.gateopener.ui.theme.appColors
 import com.dylomite.gateopener.viewmodel.BluetoothCommunicationViewModel
 import com.dylomite.gateopener.viewmodel.BluetoothConnectionViewModel
@@ -104,17 +105,19 @@ class BluetoothRemoteControlActivity : ComponentActivity(), IBaseActivity, IBlue
         ) {
             PushToActivateButton(
                 modifier = Modifier.weight(1f),
-                title = getString(R.string.channel_a)
+                title = getString(R.string.channel_a),
+                channel = Channel.ChannelA
             )
             PushToActivateButton(
                 modifier = Modifier.weight(1f),
-                title = getString(R.string.channel_b)
+                title = getString(R.string.channel_b),
+                channel = Channel.ChannelB
             )
         }
     }
 
     @Composable
-    fun PushToActivateButton(modifier: Modifier, title: String) {
+    fun PushToActivateButton(modifier: Modifier, title: String, channel: Channel) {
         val context = LocalContext.current
         Column(
             modifier = modifier
@@ -129,8 +132,18 @@ class BluetoothRemoteControlActivity : ComponentActivity(), IBaseActivity, IBlue
                     detectTapGestures(
                         onPress = {
                             Log.d(TAG, "PushToActivateButton: $title PRESSED")
+                            communicationViewModel.sendSignal(
+                                context = context,
+                                channel = channel,
+                                characteristicValue = CharacteristicValue.High
+                            )
                             this.tryAwaitRelease()
                             Log.d(TAG, "PushToActivateButton: $title RELEASED")
+                            communicationViewModel.sendSignal(
+                                context = context,
+                                channel = channel,
+                                characteristicValue = CharacteristicValue.Low
+                            )
                         },
                         onDoubleTap = { },
                         onLongPress = { },

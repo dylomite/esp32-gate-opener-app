@@ -1,4 +1,4 @@
-package com.dylomite.gateopener.model.bluetooth
+package com.dylomite.gateopener.bluetooth
 
 import android.bluetooth.BluetoothGatt
 

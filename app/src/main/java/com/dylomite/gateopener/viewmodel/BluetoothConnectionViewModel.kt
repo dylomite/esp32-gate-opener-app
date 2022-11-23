@@ -10,8 +10,8 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.dylomite.gateopener.model.bluetooth.BluetoothDeviceCallbacks
-import com.dylomite.gateopener.model.bluetooth.IBluetoothConnection
+import com.dylomite.gateopener.bluetooth.BluetoothDeviceCallbacks
+import com.dylomite.gateopener.bluetooth.IBluetoothConnection
 import com.dylomite.gateopener.model.error.ErrorModel
 import com.dylomite.gateopener.model.error.ErrorType
 import com.dylomite.gateopener.repo.BluetoothRepo.isBonded
@@ -37,7 +37,7 @@ class BluetoothConnectionViewModel(
             gatt.discoverServices()
             connectedDeviceName.value = gatt.device.name
         },
-        onDisconnect = { gatt ->
+        onDisconnect = {
             connectionListener.onDisconnect()
         },
     )
