@@ -5,21 +5,30 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import com.dylomite.gateopener.R
 import com.dylomite.gateopener.model.bluetooth.IBluetoothConnection
+import com.dylomite.gateopener.ui.theme.Shapes
+import com.dylomite.gateopener.ui.theme.appColors
 import com.dylomite.gateopener.viewmodel.BluetoothCommunicationViewModel
 import com.dylomite.gateopener.viewmodel.BluetoothConnectionViewModel
 
@@ -51,6 +60,7 @@ class BluetoothRemoteControlActivity : ComponentActivity(), IBaseActivity, IBlue
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
                 DeviceInfo()
+                ControlPanel()
             }
         }
 
@@ -64,7 +74,12 @@ class BluetoothRemoteControlActivity : ComponentActivity(), IBaseActivity, IBlue
         val deviceName by connectionViewModel.connectedDeviceName
 
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = dimensionResource(id = R.dimen.padding_small),
+                    vertical = dimensionResource(id = R.dimen.padding_mid),
+                ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
@@ -78,6 +93,62 @@ class BluetoothRemoteControlActivity : ComponentActivity(), IBaseActivity, IBlue
                 fontWeight = FontWeight.Normal
             )
         }
+    }
+
+    @Composable
+    private fun ControlPanel() {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceAround,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            PushToActivateButton(
+                modifier = Modifier.weight(1f),
+                title = getString(R.string.channel_a)
+            )
+            PushToActivateButton(
+                modifier = Modifier.weight(1f),
+                title = getString(R.string.channel_b)
+            )
+        }
+    }
+
+    @Composable
+    fun PushToActivateButton(modifier: Modifier, title: String) {
+        val context = LocalContext.current
+        Column(
+            modifier = modifier
+                .fillMaxWidth(.8f)
+                .padding(
+                    horizontal = dimensionResource(id = R.dimen.padding_big),
+                    vertical = dimensionResource(id = R.dimen.padding_mid),
+                )
+                .clip(shape = RoundedCornerShape(30))
+                .background(color = appColors().primary)
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onPress = {
+                            Log.d(TAG, "PushToActivateButton: $title PRESSED")
+                            this.tryAwaitRelease()
+                            Log.d(TAG, "PushToActivateButton: $title RELEASED")
+                        },
+                        onDoubleTap = { },
+                        onLongPress = { },
+                        onTap = {}
+                    )
+                },
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            content = {
+                Text(
+                    modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_mid)),
+                    text = title,
+                    color = appColors().onPrimary,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = dimensionResource(id = R.dimen.text_big).value.sp
+                )
+            }
+        )
     }
 
     private fun getBluetoothDeviceFromIntent(intent: Intent): BluetoothDevice? {

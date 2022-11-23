@@ -9,6 +9,8 @@
     <string name="paired_devices_title">Paired Devices</string>
     <string name="connected_to">Connected to:</string>
     <string name="device_disconnected">Bluetooth device disconnected</string>
+    <string name="channel_a">A</string>
+    <string name="channel_b">B</string>
 
     <!-- ERROR -->
     <string name="error_generic_title">Error</string>
