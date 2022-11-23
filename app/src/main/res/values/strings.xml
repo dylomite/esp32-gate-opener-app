@@ -4,8 +4,10 @@
     <!-- GENERIC -->
     <string name="ok">OK</string>
     <string name="discard">Discard</string>
+    <string name="none">None</string>
 
     <string name="paired_devices_title">Paired Devices</string>
+    <string name="connected_to">Connected to:</string>
     <string name="device_disconnected">Bluetooth device disconnected</string>
 
     <!-- ERROR -->

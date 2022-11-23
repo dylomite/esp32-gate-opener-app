@@ -35,14 +35,15 @@ class BluetoothConnectionViewModel(
     private val gattCallbacks = BluetoothDeviceCallbacks(
         onConnect = { gatt ->
             gatt.discoverServices()
-            Log.d(TAG, "BluetoothCallbacks: connected!")
+            connectedDeviceName.value = gatt.device.name
         },
         onDisconnect = { gatt ->
             connectionListener.onDisconnect()
         },
     )
     private var bluetoothAdapter = mutableStateOf<BluetoothAdapter?>(null)
-    var bluetoothGatt = mutableStateOf<BluetoothGatt?>(null)
+    val bluetoothGatt = mutableStateOf<BluetoothGatt?>(null)
+    val connectedDeviceName = mutableStateOf<String?>(null)
 
     override fun onCleared() {
         disconnectDeviceAndReset(bluetoothGatt.value)
@@ -83,6 +84,7 @@ class BluetoothConnectionViewModel(
         }
         bluetoothAdapter.value = null
         bluetoothGatt.value = null
+        connectedDeviceName.value = null
         isLoading.value = false
     }
 
