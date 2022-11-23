@@ -44,10 +44,7 @@ class BluetoothDevicesListActivity : ComponentActivity(), IBaseActivity {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        activityContents(
-            errorModelState = btDevicesListViewModel.error,
-            isLoadingState = btDevicesListViewModel.isLoading
-        ) {
+        activityContents(viewModelsList = listOf(btDevicesListViewModel)) {
             PairedDevicesList()
         }
 

@@ -55,10 +55,7 @@ class BluetoothRemoteControlActivity : ComponentActivity(), IBaseActivity, IBlue
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        activityContents(
-            errorModelState = connectionViewModel.error,//TODO: Map vm
-            isLoadingState = connectionViewModel.isLoading
-        ) {
+        activityContents(viewModelsList = listOf(connectionViewModel, communicationViewModel)) {
             Column(modifier = Modifier.fillMaxSize()) {
                 DeviceInfo()
                 ControlPanel()
