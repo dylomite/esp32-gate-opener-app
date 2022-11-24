@@ -44,11 +44,6 @@ class ConnectionViewModel(
     val bluetoothGatt = mutableStateOf<BluetoothGatt?>(null)
     val connectedDeviceName = mutableStateOf<String?>(null)
 
-    override fun onCleared() {
-        disconnectDeviceAndReset(bluetoothGatt.value)
-        super.onCleared()
-    }
-
     /**
      * NOTES:
      *  - Remain on the main thread for the connection part

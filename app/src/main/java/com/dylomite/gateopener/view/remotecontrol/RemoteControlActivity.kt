@@ -60,6 +60,11 @@ class RemoteControlActivity : ComponentActivity(), IBaseActivity, IBluetoothConn
         }
     }
 
+    override fun onDestroy() {
+        connectionViewModel.disconnectDeviceAndReset(connectionViewModel.bluetoothGatt.value)
+        super.onDestroy()
+    }
+
     @Composable
     private fun DeviceInfo() {
         val deviceName by connectionViewModel.connectedDeviceName
