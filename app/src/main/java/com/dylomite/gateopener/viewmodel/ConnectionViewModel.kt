@@ -9,6 +9,7 @@ import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.dylomite.gateopener.Utils.delayedDismiss
 import com.dylomite.gateopener.bluetooth.BluetoothDeviceCallbacks
 import com.dylomite.gateopener.bluetooth.IBluetoothConnection
 import com.dylomite.gateopener.model.error.ErrorModel
@@ -35,6 +36,7 @@ class ConnectionViewModel(
         onConnect = { gatt ->
             gatt.discoverServices()
             connectedDeviceName.value = gatt.device.name
+            isLoading.value = false
         },
         onDisconnect = {
             connectionListener.onDisconnect()
@@ -63,10 +65,18 @@ class ConnectionViewModel(
                         BluetoothDevice.TRANSPORT_LE
                     ).also { gatt -> gatt.connect() }
                 }
+
+                isLoading.delayedDismiss(
+                    delayMs = 10000,
+                    onDismiss = {
+                        //Device not found
+                        runBlocking(Dispatchers.Main) { connectionListener.onDisconnect() }
+                    }
+                )
             } else {
                 error.value = ErrorModel(ErrorType.ErrorDeviceNotBonded)
+                isLoading.value = false
             }
-            isLoading.value = false//TODO: Impl dismiss after time
         }
     }
 
