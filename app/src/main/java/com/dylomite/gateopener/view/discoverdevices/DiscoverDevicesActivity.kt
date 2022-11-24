@@ -1,6 +1,7 @@
 package com.dylomite.gateopener.view.discoverdevices
 
 import android.annotation.SuppressLint
+import android.bluetooth.BluetoothDevice
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.clickable
@@ -24,18 +25,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.dylomite.gateopener.R
+import com.dylomite.gateopener.bluetooth.IDeviceAutoConnect
 import com.dylomite.gateopener.view.IBaseActivity
 import com.dylomite.gateopener.view.remotecontrol.RemoteControlActivity
 import com.dylomite.gateopener.viewmodel.DevicesListViewModel
 import kotlinx.coroutines.launch
 
 
-class DiscoverDevicesActivity : ComponentActivity(), IBaseActivity {
+class DiscoverDevicesActivity : ComponentActivity(), IBaseActivity, IDeviceAutoConnect {
 
     private val devicesListViewModel by lazy {
         DevicesListViewModel(
             app = application,
-            activity = this
+            activity = this,
+            autoConnectListener = this
         )
     }
 
@@ -134,6 +137,15 @@ class DiscoverDevicesActivity : ComponentActivity(), IBaseActivity {
                 }
             }
         }
+    }
+
+    override fun tryAutoConnect(device: BluetoothDevice) {
+        startActivity(
+            RemoteControlActivity.getStartIntent(
+                context = this,
+                device = device
+            )
+        )
     }
 
 }

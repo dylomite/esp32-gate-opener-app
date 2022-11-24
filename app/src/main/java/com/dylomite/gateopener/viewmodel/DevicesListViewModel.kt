@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.dylomite.gateopener.bluetooth.IDeviceAutoConnect
 import com.dylomite.gateopener.model.error.ErrorModel
 import com.dylomite.gateopener.model.error.ErrorType
 import com.dylomite.gateopener.repo.BluetoothRepo
@@ -19,7 +20,11 @@ import com.dylomite.gateopener.repo.PermissionRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class DevicesListViewModel(app: Application, activity: ComponentActivity) :
+class DevicesListViewModel(
+    app: Application,
+    activity: ComponentActivity,
+    private val autoConnectListener: IDeviceAutoConnect
+) :
     AndroidViewModel(app), IBaseViewModel {
 
     companion object {
@@ -92,7 +97,9 @@ class DevicesListViewModel(app: Application, activity: ComponentActivity) :
                     // Get paired devices.
                     val pairedDevices = adapter.bondedDevices
                     if (pairedDevices.size > 0) {
-                        pairedDevicesList.addAll(pairedDevices.toList())
+                        val devices = pairedDevices.toList()
+                        pairedDevicesList.addAll(devices)
+                        attemptAutoConnect(devices)
                     } else {
                         error.value = ErrorModel(ErrorType.ErrorNoPairedDevices)
                     }
@@ -102,5 +109,13 @@ class DevicesListViewModel(app: Application, activity: ComponentActivity) :
         }
     }
 
+    @SuppressLint("MissingPermission")
+    private fun attemptAutoConnect(devices: List<BluetoothDevice>) {
+        devices.forEach { device ->
+            device.uuids
+                ?.find { it.uuid == BluetoothRepo.getServiceUUID() }
+                ?.let { autoConnectListener.tryAutoConnect(device) }
+        }
+    }
 
 }
