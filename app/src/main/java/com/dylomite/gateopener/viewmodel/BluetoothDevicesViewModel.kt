@@ -19,11 +19,11 @@ import com.dylomite.gateopener.repo.PermissionRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class BluetoothDeviceListViewModel(app: Application, activity: ComponentActivity) :
+class BluetoothDevicesViewModel(app: Application, activity: ComponentActivity) :
     AndroidViewModel(app), IBaseViewModel {
 
     companion object {
-        const val TAG = "BluetoothDeviceListViewModel"
+        const val TAG = "BluetoothDevicesViewModel"
     }
 
     override var isLoading = mutableStateOf(false)

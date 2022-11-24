@@ -30,24 +30,24 @@ import com.dylomite.gateopener.bluetooth.IBluetoothConnection
 import com.dylomite.gateopener.model.Channel
 import com.dylomite.gateopener.model.CharacteristicValue
 import com.dylomite.gateopener.ui.theme.appColors
-import com.dylomite.gateopener.viewmodel.BluetoothCommunicationViewModel
-import com.dylomite.gateopener.viewmodel.BluetoothConnectionViewModel
+import com.dylomite.gateopener.viewmodel.CommunicationViewModel
+import com.dylomite.gateopener.viewmodel.ConnectionViewModel
 
-class BluetoothRemoteControlActivity : ComponentActivity(), IBaseActivity, IBluetoothConnection {
+class RemoteControlActivity : ComponentActivity(), IBaseActivity, IBluetoothConnection {
 
     private val connectionViewModel by lazy {
-        BluetoothConnectionViewModel(app = application, connectionListener = this)
+        ConnectionViewModel(app = application, connectionListener = this)
     }
 
     private val communicationViewModel by lazy {
-        BluetoothCommunicationViewModel(app = application, connectionListener = this)
+        CommunicationViewModel(app = application, connectionListener = this)
     }
 
     companion object {
         const val TAG = "BluetoothRemoteControlActivity"
         private const val BLUETOOTH_DEVICE_KEY = "BLUETOOTH_DEVICE_KEY"
         fun getStartIntent(context: Context, device: BluetoothDevice) =
-            Intent(context, BluetoothRemoteControlActivity::class.java).apply {
+            Intent(context, RemoteControlActivity::class.java).apply {
                 putExtra(BLUETOOTH_DEVICE_KEY, device)
             }
     }

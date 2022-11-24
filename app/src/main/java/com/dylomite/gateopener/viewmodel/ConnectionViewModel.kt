@@ -6,7 +6,6 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,13 +18,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-class BluetoothConnectionViewModel(
+class ConnectionViewModel(
     app: Application,
     private val connectionListener: IBluetoothConnection
 ) : AndroidViewModel(app), IBaseViewModel {
 
     companion object {
-        const val TAG = "BluetoothConnectionViewModel"
+        const val TAG = "ConnectionViewModel"
     }
 
     override var isLoading = mutableStateOf(false)

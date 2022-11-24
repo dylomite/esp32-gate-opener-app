@@ -12,13 +12,13 @@ import com.dylomite.gateopener.model.error.ErrorModel
 import com.dylomite.gateopener.model.error.ErrorType
 import com.dylomite.gateopener.repo.BluetoothRepo
 
-class BluetoothCommunicationViewModel(
+class CommunicationViewModel(
     app: Application,
     private val connectionListener: IBluetoothConnection
 ) : AndroidViewModel(app), IBaseViewModel {
 
     companion object {
-        const val TAG = "BluetoothCommunicationViewModel"
+        const val TAG = "CommunicationViewModel"
     }
 
     override var isLoading = mutableStateOf(false)
