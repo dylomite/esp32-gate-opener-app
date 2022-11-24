@@ -1,11 +1,11 @@
-package com.dylomite.gateopener.ui
+package com.dylomite.gateopener.view
 
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
-import com.dylomite.gateopener.ui.common.ErrorDialogs
-import com.dylomite.gateopener.ui.common.LoadingDialogs
-import com.dylomite.gateopener.ui.theme.GateOpenerTheme
+import com.dylomite.gateopener.view.common.ErrorDialogs
+import com.dylomite.gateopener.view.common.LoadingDialogs
+import com.dylomite.gateopener.view.theme.GateOpenerTheme
 import com.dylomite.gateopener.viewmodel.IBaseViewModel
 
 interface IBaseActivity {

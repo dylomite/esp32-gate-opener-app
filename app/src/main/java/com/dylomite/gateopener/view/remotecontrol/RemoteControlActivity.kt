@@ -1,4 +1,4 @@
-package com.dylomite.gateopener.ui
+package com.dylomite.gateopener.view.remotecontrol
 
 import android.bluetooth.BluetoothDevice
 import android.content.Context
@@ -29,7 +29,8 @@ import com.dylomite.gateopener.R
 import com.dylomite.gateopener.bluetooth.IBluetoothConnection
 import com.dylomite.gateopener.model.Channel
 import com.dylomite.gateopener.model.CharacteristicValue
-import com.dylomite.gateopener.ui.theme.appColors
+import com.dylomite.gateopener.view.IBaseActivity
+import com.dylomite.gateopener.view.theme.appColors
 import com.dylomite.gateopener.viewmodel.CommunicationViewModel
 import com.dylomite.gateopener.viewmodel.ConnectionViewModel
 
@@ -44,7 +45,7 @@ class RemoteControlActivity : ComponentActivity(), IBaseActivity, IBluetoothConn
     }
 
     companion object {
-        const val TAG = "BluetoothRemoteControlActivity"
+        const val TAG = "RemoteControlActivity"
         private const val BLUETOOTH_DEVICE_KEY = "BLUETOOTH_DEVICE_KEY"
         fun getStartIntent(context: Context, device: BluetoothDevice) =
             Intent(context, RemoteControlActivity::class.java).apply {

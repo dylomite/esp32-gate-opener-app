@@ -1,4 +1,4 @@
-package com.dylomite.gateopener.ui
+package com.dylomite.gateopener.view.discoverdevices
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -24,14 +24,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.dylomite.gateopener.R
-import com.dylomite.gateopener.viewmodel.BluetoothDevicesViewModel
+import com.dylomite.gateopener.view.IBaseActivity
+import com.dylomite.gateopener.view.remotecontrol.RemoteControlActivity
+import com.dylomite.gateopener.viewmodel.DevicesListViewModel
 import kotlinx.coroutines.launch
 
 
 class DiscoverDevicesActivity : ComponentActivity(), IBaseActivity {
 
     private val devicesListViewModel by lazy {
-        BluetoothDevicesViewModel(
+        DevicesListViewModel(
             app = application,
             activity = this
         )

@@ -1,4 +1,4 @@
-package com.dylomite.gateopener.ui.common
+package com.dylomite.gateopener.view.common
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

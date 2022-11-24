@@ -1,4 +1,4 @@
-package com.dylomite.gateopener.ui.theme
+package com.dylomite.gateopener.view.theme
 
 import androidx.compose.ui.graphics.Color
 
