@@ -5,32 +5,24 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import com.dylomite.gateopener.R
 import com.dylomite.gateopener.bluetooth.IBluetoothConnection
 import com.dylomite.gateopener.model.Channel
 import com.dylomite.gateopener.model.CharacteristicValue
 import com.dylomite.gateopener.view.IBaseActivity
-import com.dylomite.gateopener.view.theme.appColors
 import com.dylomite.gateopener.viewmodel.CommunicationViewModel
 import com.dylomite.gateopener.viewmodel.ConnectionViewModel
 
@@ -78,12 +70,10 @@ class RemoteControlActivity : ComponentActivity(), IBaseActivity, IBluetoothConn
                 .padding(
                     horizontal = dimensionResource(id = R.dimen.padding_small),
                     vertical = dimensionResource(id = R.dimen.padding_mid),
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally
+                ), horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = stringResource(id = R.string.connected_to),
-                fontWeight = FontWeight.Bold
+                text = stringResource(id = R.string.connected_to), fontWeight = FontWeight.Bold
             )
             Text(
                 modifier = Modifier,
@@ -96,6 +86,7 @@ class RemoteControlActivity : ComponentActivity(), IBaseActivity, IBluetoothConn
 
     @Composable
     private fun ControlPanel() {
+        val context = LocalContext.current
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.SpaceAround,
@@ -104,62 +95,28 @@ class RemoteControlActivity : ComponentActivity(), IBaseActivity, IBluetoothConn
             PushToActivateButton(
                 modifier = Modifier.weight(1f),
                 title = getString(R.string.channel_a),
-                channel = Channel.ChannelA
+                channel = Channel.ChannelA,
+                onPressEvent = { channel, isPressed ->
+                    communicationViewModel.sendSignal(
+                        context = context,
+                        channel = channel,
+                        characteristicValue = if (isPressed) CharacteristicValue.High else CharacteristicValue.Low
+                    )
+                }
             )
             PushToActivateButton(
                 modifier = Modifier.weight(1f),
                 title = getString(R.string.channel_b),
-                channel = Channel.ChannelB
+                channel = Channel.ChannelB,
+                onPressEvent = { channel, isPressed ->
+                    communicationViewModel.sendSignal(
+                        context = context,
+                        channel = channel,
+                        characteristicValue = if (isPressed) CharacteristicValue.High else CharacteristicValue.Low
+                    )
+                }
             )
         }
-    }
-
-    @Composable
-    fun PushToActivateButton(modifier: Modifier, title: String, channel: Channel) {
-        val context = LocalContext.current
-        Column(
-            modifier = modifier
-                .fillMaxWidth(.8f)
-                .padding(
-                    horizontal = dimensionResource(id = R.dimen.padding_big),
-                    vertical = dimensionResource(id = R.dimen.padding_mid),
-                )
-                .clip(shape = RoundedCornerShape(30))
-                .background(color = appColors().primary)
-                .pointerInput(Unit) {
-                    detectTapGestures(
-                        onPress = {
-                            Log.d(TAG, "PushToActivateButton: $title PRESSED")
-                            communicationViewModel.sendSignal(
-                                context = context,
-                                channel = channel,
-                                characteristicValue = CharacteristicValue.High
-                            )
-                            this.tryAwaitRelease()
-                            Log.d(TAG, "PushToActivateButton: $title RELEASED")
-                            communicationViewModel.sendSignal(
-                                context = context,
-                                channel = channel,
-                                characteristicValue = CharacteristicValue.Low
-                            )
-                        },
-                        onDoubleTap = { },
-                        onLongPress = { },
-                        onTap = {}
-                    )
-                },
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            content = {
-                Text(
-                    modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_mid)),
-                    text = title,
-                    color = appColors().onPrimary,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = dimensionResource(id = R.dimen.text_big).value.sp
-                )
-            }
-        )
     }
 
     private fun getBluetoothDeviceFromIntent(intent: Intent): BluetoothDevice? {
@@ -173,13 +130,9 @@ class RemoteControlActivity : ComponentActivity(), IBaseActivity, IBluetoothConn
     override fun getBluetoothGatt() = connectionViewModel.bluetoothGatt.value
 
     override fun onDisconnect() {
-        Toast
-            .makeText(
-                this,
-                resources.getString(R.string.device_disconnected),
-                Toast.LENGTH_SHORT
-            )
-            .show()
+        Toast.makeText(
+            this, resources.getString(R.string.device_disconnected), Toast.LENGTH_SHORT
+        ).show()
         finish()
     }
 
